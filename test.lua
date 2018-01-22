@@ -7,8 +7,9 @@ local doc = tracedoc.new {
 	d = {},
 }
 
-local function dump(doc)
+local function dump(doc, tag)
 	local changes = tracedoc.commit(doc, {})
+	print("======================================="..tag)
 	print("Dump:")
 	for k,v in pairs(doc) do
 		print(k,v)
@@ -22,18 +23,19 @@ local function dump(doc)
 	for k,v in pairs(changes) do
 		print(k,v)
 	end
+	print("======================================="..tag)
 end
 
-dump(doc)
+dump(doc, 1)
 
 print "-----------------------------"
 
 doc.b[3] = nil
 doc.b = { 1,3 }	-- remove [3], change [2]
 
-dump(doc)
+dump(doc, 2)
 
-tracedoc.opaque(doc.d, true)
+tracedoc.opaque(doc.d, false)
 doc.d.x = 1	-- d change ( d is opaque)
 doc.d.y = 2	-- d change ( d is opaque)
 
@@ -48,7 +50,7 @@ local tmp = doc.c
 
 print(tracedoc.dump(doc.b))
 
-dump(doc)
+dump(doc, 3)
 
 doc.a = nil	-- clear doc.a
 assert(doc.a == nil)
@@ -69,7 +71,7 @@ for k,v in pairs(doc) do
 	print("doc."..k , v)
 end
 
-dump(doc)
+dump(doc, 4)
 
 doc.a = 2	-- change
 assert(doc.a == 2)
@@ -86,7 +88,7 @@ assert(tmp == doc.c)
 tmp = doc.c	-- update c
 assert(tmp ~= doc_c)
 
-dump(doc)
+dump(doc, 5)
 
 assert(tmp.e == 5)
 
